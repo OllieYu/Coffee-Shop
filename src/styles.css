@@ -1,0 +1,59 @@
+body {
+	margin: 0;
+	background-color: #000;
+	color: #fff;
+	font-family: Monospace;
+	font-size: 13px;
+	line-height: 24px;
+	overscroll-behavior: none;
+}
+
+a {
+	color: #ff0;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+button {
+	cursor: pointer;
+	text-transform: uppercase;
+}
+
+a, button, input, select {
+	pointer-events: auto;
+}
+
+
+html, body, pre, code, kbd, samp {
+	font-family: "Press Start 2P";
+}
+
+.btnGroup  {
+	width: 100vw;
+	margin: 40px 0;
+	display: flex;
+	justify-content: center;
+}
+
+.btnGroup button {
+	margin: 0 10px;
+}
+
+.btnGroup button:focus {
+	box-shadow: none!important;
+}
+
+.icon-list {
+	height: '100vh';
+	display: flex;
+	position: fixed;
+	bottom: 0;
+	margin: 5px
+}
+
+.icon-list i {
+	margin:0 10px;
+}

@@ -1,18 +1,23 @@
 {
-  "name": "island",
+  "name": "coffee-shop",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "parcel src/index.html",
-    "build": "parcel build src/index.html"
-  },
-  "author": "",
+  "author": "Y_Yu",
   "license": "ISC",
-  "devDependencies": {
-    "parcel-bundler": "^1.12.5"
+  "description": "Personal profile",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
   },
   "dependencies": {
+    "gsap": "^3.10.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "three": "^0.142.0"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "parcel": "^2.6.2",
+    "process": "^0.11.10"
   }
 }
