@@ -1,9 +1,11 @@
 import { useRef, useEffect, useState, Fragment } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import coffeeShopModel from '../assets/CoffeeShop.glb'
+import { TextGeometry }from 'three/examples/jsm/geometries/TextGeometry'
+import coffeeShopModel from '../assets/coffeeShop.glb'
 import loadGLTFModel from './loadGLTFModel'
 import gsap from 'gsap'
+import { FontLoader } from 'three/examples/jsm/loaders/fontloader'
 
 const CoffeeShop = () => {
     const canvasRef = useRef()
@@ -65,6 +67,28 @@ const CoffeeShop = () => {
           animate()
         })
         
+
+        const textLoad = new FontLoader()
+        
+        const font = textLoad.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',function(font){
+          　var txtGeo = new TextGeometry('Y_Yu',{
+                  font: font,
+                  size: 0.3,
+                  height: 0.03,
+                  curveSegments: 100,
+                  bevelEnabled: true,
+                  bevelThickness: 0.001,
+                  bevelSize: 0.0005,
+               　　bevelSegments: 10
+              });
+        　　var txtMater = new THREE.MeshBasicMaterial({color: 0xfadacb});
+           var txtMesh = new THREE.Mesh(txtGeo,txtMater);
+           txtGeo.rotateX(-Math.PI/2);
+           txtGeo.rotateY(0.7);
+           txtMesh.position.set(1.5,0.1,-1.5);
+           scene.add(txtMesh);
+       });
+
         //loading progress
         manager.onLoad = function () {
           timer = setTimeout(() => {
@@ -86,6 +110,27 @@ const CoffeeShop = () => {
           setProgress((itemsLoaded / itemsTotal) * 100)
         }
   
+        toMe = () => {
+          gsap.to(controls.object.position, {
+              x:5.2666723107851,
+              y:3.945134151481592,
+              z:-0.334172258811552,
+              duration: 1.5,
+              ease: 'power2.out',
+          })
+          gsap.to(controls.target, {
+              x:0.8439831767287866,
+              y:-0.6119460685867475,
+              z:-1.0909485007302122,
+              duration: 1.5,
+              ease: 'power2.out'
+              // onUpdate: () => {
+              //     camera.lookAt(controls.target)
+              // }
+          })
+          
+      }
+
         toAbout = () => {
             gsap.to(controls.object.position, {
                 x:0.37590085647125704,
@@ -113,14 +158,14 @@ const CoffeeShop = () => {
                 y:0.48851509821204314,
                 z:0.009777768366045395,
                 duration: 1.5,
-                ease: 'power4.out',
+                ease: 'power2.out',
             })
             gsap.to(controls.target, {
                 x:0.43745293657515133,
                 y:0.4517064975377385,
                 z:0.09375796482458582,
                 duration: 1.5,
-                ease: 'power4.out'
+                ease: 'power2.out'
                 // onUpdate: () => {
                 //     camera.lookAt(controls.target)
                 // }
@@ -139,10 +184,10 @@ const CoffeeShop = () => {
             renderer.setSize(window.innerWidth, window.innerHeight)
           }
   
-        //   window.addEventListener('click', (e) => {
-        //     console.log(controls.object.position)
-        //     console.log(controls.target)
-        //   })
+          // window.addEventListener('click', (e) => {
+          //   console.log(controls.object.position)
+          //   console.log(controls.target)
+          // })
 
           renderer.render(scene, camera)
         }
@@ -186,7 +231,7 @@ const CoffeeShop = () => {
         ) : (
         <div style={{position: 'fixed'}}>
           <div className="btnGroup">
-            <button type="button" className="nes-btn is-primary">
+            <button type="button" onClick={() => toMe() }className="nes-btn is-primary">
                 Ollie Yu
             </button>
             <button type="button" onClick={() => toProject()} className="nes-btn is-primary">
