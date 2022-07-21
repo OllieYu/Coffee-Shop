@@ -86,21 +86,21 @@ const CoffeeShop = () => {
       //   console.log(controls)
       // }
 
-      const mouse = new THREE.Vector2()
-      const target = new THREE.Vector3();
-      const windowHalf = new THREE.Vector2( window.innerWidth / 2, window.innerHeight / 2 );
-      onMouseMove = (e) => {
-        mouse.x = ( e.clientX - windowHalf.x );
-        mouse.y = ( e.clientY - windowHalf.x );
-      }
+      // const mouse = new THREE.Vector2()
+      // const target = new THREE.Vector3();
+      // const windowHalf = new THREE.Vector2( window.innerWidth / 2, window.innerHeight / 2 );
+      // onMouseMove = (e) => {
+      //   mouse.x = ( e.clientX - windowHalf.x );
+      //   mouse.y = ( e.clientY - windowHalf.x );
+      // }
       let req = null
       const animate = () => {
-        console.log(mouse)
-        target.x = ( 1 - mouse.x ) * 0.0002;
-        target.y = ( 1 - mouse.y ) * 0.0002;
+        // console.log(mouse)
+        // target.x = ( 1 - mouse.x ) * 0.0002;
+        // target.y = ( 1 - mouse.y ) * 0.0002;
         
-        camera.position.x += 0.05 * ( target.x - camera.position.x );
-        camera.position.y += 0.05 * ( target.y - camera.position.y );
+        // camera.position.x += 0.05 * ( target.x - camera.position.x );
+        // camera.position.y += 0.05 * ( target.y - camera.position.y );
         window.onresize = function () {
           camera.aspect = window.innerWidth / window.innerHeight
           camera.updateProjectionMatrix()
