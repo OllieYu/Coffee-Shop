@@ -1,0 +1,22 @@
+.btnGroup  {
+	width: 100vw;
+	margin: 40px 0;
+	display: flex;
+	justify-content: center;
+}
+
+.btnGroup button {
+	margin: 0 10px;
+}
+
+.btnGroup button:focus {
+	box-shadow: none!important;
+}
+
+.icon-list {
+	height: '100vh';
+	display: flex;
+	position: fixed;
+	bottom: 0;
+	margin: 5px
+}
