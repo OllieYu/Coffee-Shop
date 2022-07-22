@@ -8,7 +8,7 @@
   "homepage": "https://ollieyu.github.io/Coffee-Shop/",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build",
+    "build": "parcel build --public-url ./",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
