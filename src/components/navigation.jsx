@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import gsap from 'gsap'
 import './navigation.css'
 
-function Navigation({camera,controls,moveSound}) {
+function Navigation({camera,controls,moveSound,setCurrentTab}) {
   toMe = () => {
       gsap.to(camera.position, {
         x: 5.2666723107851,
@@ -28,9 +28,9 @@ function Navigation({camera,controls,moveSound}) {
 
     toAbout = () => {
       gsap.to(camera.position, {
-        x: 0.37937865949564364,
-        y: 0.34447916269433865,
-        z: 0.5905731859495336,
+        x: 0.4122725240601716,
+        y: 0.3416863933036325,
+        z: 0.5879966739562191,
         duration: 1,
         ease: 'power2.out',
         onStart: () => {
@@ -38,9 +38,9 @@ function Navigation({camera,controls,moveSound}) {
         }
       })
       gsap.to(controls.target, {
-        x: 0.32177351325183107,
-        y: 0.3464994530902155,
-        z: 0.01952909361410751,
+        x: 0.33029201281582293,
+        y: 0.34370639330363245,
+        z: 0.019939650641556277,
         duration: 1,
         ease: 'power2.out',
         onComplete: ()=>{
@@ -58,6 +58,7 @@ function Navigation({camera,controls,moveSound}) {
         ease: 'power4.out',
         onStart: () => {
           moveSound.play()
+          controls.enabled = true
         }
       })
       gsap.to(controls.target, {
@@ -66,9 +67,9 @@ function Navigation({camera,controls,moveSound}) {
         z: 0.097586,
         duration: 1,
         ease: 'power4.out',
-        onComplete: () => {
-          controls.enabled = false // activate the controler again after animation
-        }
+        // onComplete: () => {
+        //   controls.enabled = false // activate the controler again after animation
+        // }
       })
     }
   return (
@@ -76,21 +77,30 @@ function Navigation({camera,controls,moveSound}) {
       <div style={{position:'fixed'}} className="btnGroup">
         <button
           type="button"
-          onClick={() => toMe()}
+          onClick={() => {
+            toMe()
+            setCurrentTab('me')
+          }}
           className="nes-btn is-primary"
         >
           Ollie Yu
         </button>
         <button
           type="button"
-          onClick={() => toProject()}
+          onClick={() => {
+            toProject()
+            setCurrentTab('project')
+          }}
           className="nes-btn is-primary"
         >
           Project
         </button>
         <button
           type="button"
-          onClick={() => toAbout()}
+          onClick={() => {
+            toAbout()
+            setCurrentTab('about')
+          }}
           className="nes-btn is-primary"
         >
           About

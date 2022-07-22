@@ -24,6 +24,7 @@ const CoffeeShop = () => {
   const [coffee, setCoffee] = useState(null)
   const [BGM, setBGM] = useState(null)
   const [moveSound, setMoveSound] = useState(null)
+  const [currentTab, setCurrentTab] = useState('')
 
   useEffect(() => {
     const { current: container } = canvasRef
@@ -66,41 +67,30 @@ const CoffeeShop = () => {
       //raycaster
       ProjectRaycaster(scene, camera, setCoffee)
 
-      // onMouseMove = (e) => {
-      //   const target = new THREE.Vector3()
-      //   const windowHalf = new THREE.Vector2( window.innerWidth / 2, window.innerHeight / 2 )
-      //   const mouse = new THREE.Vector2()
-      //   // mouse.x = ( e.clientX - (windowHalf.x/ 2) )
-      //   // mouse.y = ( e.clientY - (windowHalf.y / 2) )
-      //   mouse.x = (e.clientX - windowHalf.x)
-      //   mouse.y = (e.clientY - windowHalf.y)
-      //   console.log(mouse)
-      //   gsap.to(camera.rotation, {
-      //     x: 5-3*mouse.x,
-      //     // y: 3+3*mouse.y,
-      //     duration: 0.01,
-      //     ease: 'power2.out'
-      //   })
-      //   // mouse.x = ( e.clientX - windowHalf.x );
-      //   // mouse.y = ( e.clientY - windowHalf.y );
-      //   console.log(controls)
-      // }
+      const escapeHandler = (e) => {
+        if (e.key === "Escape") {
+          restorePosition()
+        }
+      };
+      document.addEventListener("keydown", escapeHandler, false);
 
-      // const mouse = new THREE.Vector2()
-      // const target = new THREE.Vector3();
-      // const windowHalf = new THREE.Vector2( window.innerWidth / 2, window.innerHeight / 2 );
-      // onMouseMove = (e) => {
-      //   mouse.x = ( e.clientX - windowHalf.x );
-      //   mouse.y = ( e.clientY - windowHalf.x );
-      // }
+      const mouse = new THREE.Vector2()
+      onMouseMove = (e,currentTab) => {
+
+        if (!(currentTab ==='about')) {
+          mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+          var ratio = 0.2;
+          gsap.to(scene.rotation, {
+            y: mouse.x * ratio,
+            // x: -mouse.y * ratio,
+            duration: 1,
+            ease: 'power2.out',
+          });
+        }
+      }
       let req = null
       const animate = () => {
-        // console.log(mouse)
-        // target.x = ( 1 - mouse.x ) * 0.0002;
-        // target.y = ( 1 - mouse.y ) * 0.0002;
-        
-        // camera.position.x += 0.05 * ( target.x - camera.position.x );
-        // camera.position.y += 0.05 * ( target.y - camera.position.y );
         window.onresize = function () {
           camera.aspect = window.innerWidth / window.innerHeight
           camera.updateProjectionMatrix()
@@ -114,6 +104,7 @@ const CoffeeShop = () => {
       return () => {
         cancelAnimationFrame(req)
         renderer.dispose()
+        document.removeEventListener("keydown", escapeHandler, false);
       }
     }
   }, [])
@@ -150,8 +141,10 @@ const CoffeeShop = () => {
     const controls = new OrbitControls(camera, renderer)
     controls.target.set(0, 0.7, 0)
     controls.update()
-    controls.enableDamping = false
-    controls.enablePan = true
+    controls.enableDamping = true
+    controls.enablePan = false
+    controls.maxPolarAngle = Math.PI / 2
+    controls.maxDistance = 20
     setControls(controls)
     return controls
   }
@@ -202,20 +195,40 @@ const CoffeeShop = () => {
     setEnter(true)
   }
 
-
-  // window.addEventListener('click', () => {
-  //   console.log(camera.position)
-  //   console.log(controls.target)
-  // })
+  restorePosition = () => {
+    gsap.to(camera.position, {
+      x: 5,
+      y: 3,
+      z: 5.6,
+      duration: 1.5,
+      ease: 'power2.out',
+      onStart: () => {
+        moveSound.play()
+        controls.enabled = true
+      },
+      onComplete: () => {
+        setCurrentTab('init')
+      }
+    })
+    gsap.to(controls.target, {
+      x: 0,
+      y: 0.7,
+      z: 0,
+      duration: 1.5,
+      ease: 'power2.out'
+    })
+  }
 
   return (
     <div
       onClick={(e) => {
         onMouseClick(e)
       }}
-      // onMouseMove={(e) => {
-      //   onMouseMove(e)
-      // }}
+      onMouseMove={(e) => {
+        if(typeof onMouseMove === 'function'){
+          onMouseMove(e,currentTab)
+        }
+      }}
       style={{
         margin: 0,
         height: '100vh',
@@ -246,9 +259,9 @@ const CoffeeShop = () => {
         </div>
       ) : (
         <Fragment>
-          <Navigation camera={camera} controls={controls} moveSound={moveSound}/>
+          <Navigation camera={camera} controls={controls} moveSound={moveSound} setCurrentTab={setCurrentTab}/>
           {coffee && (
-            <ProjectContent coffee={coffee}/>
+            <ProjectContent coffee={coffee} />
           )}
         </Fragment>
       )}

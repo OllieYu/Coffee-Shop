@@ -20,25 +20,25 @@ function ProjectRaycaster(scene, camera, setCoffee) {
     tween1 = gsap.timeline()
     tween1
       .to(obj.position, {
-        y: obj.position.y + 100,
-        duration: 0.5,
+        y: obj.position.y + 50,
+        duration: 0.8,
         ease: 'linear'
       })
       .to(obj.position, {
         y: obj.position.y + 200,
         duration: 1,
-        ease: 'power1.inOut',
+        ease: 'sine.inOut',
         repeat: -1,
         yoyo: true
       })
     tween2 = gsap.to(obj.rotation, {
       x: 0.3,
-      duration: 2,
+      duration: 1,
       ease: 'power2.out'
     })
     tween3 = gsap.to(obj.rotation, {
       y: Math.PI * 2,
-      duration: 2,
+      duration: 3,
       ease: 'linear',
       repeat: -1
     })
