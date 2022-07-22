@@ -5,9 +5,11 @@
   "license": "ISC",
   "description": "Personal profile",
   "source": "src/index.html",
+  "homepage": "https://ollieyu.github.io/Coffee-Shop/",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "gsap": "^3.10.4",
@@ -17,6 +19,7 @@
   },
   "devDependencies": {
     "buffer": "^6.0.3",
+    "gh-pages": "^4.0.0",
     "parcel": "^2.6.2",
     "process": "^0.11.10"
   }
