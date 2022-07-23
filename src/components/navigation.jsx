@@ -3,7 +3,8 @@ import gsap from 'gsap'
 import './navigation.css'
 
 function Navigation({camera,controls,moveSound,setCurrentTab}) {
-  toMe = () => {
+  const toMe = () => {
+    setCurrentTab('me')
       gsap.to(camera.position, {
         x: 5.2666723107851,
         y: 3.945134151481592,
@@ -26,7 +27,8 @@ function Navigation({camera,controls,moveSound,setCurrentTab}) {
       })
     }
 
-    toAbout = () => {
+    const toAbout = () => {
+      setCurrentTab('about')
       gsap.to(camera.position, {
         x: 0.4122725240601716,
         y: 0.3416863933036325,
@@ -49,7 +51,8 @@ function Navigation({camera,controls,moveSound,setCurrentTab}) {
       })
     }
 
-    toProject = () => {
+    const toProject = () => {
+      setCurrentTab('project')
       gsap.to(camera.position, {
         x: 0.1019304615211028,
         y: 0.5037491116865992,
@@ -79,7 +82,6 @@ function Navigation({camera,controls,moveSound,setCurrentTab}) {
           type="button"
           onClick={() => {
             toMe()
-            setCurrentTab('me')
           }}
           className="nes-btn is-primary"
         >
@@ -89,7 +91,6 @@ function Navigation({camera,controls,moveSound,setCurrentTab}) {
           type="button"
           onClick={() => {
             toProject()
-            setCurrentTab('project')
           }}
           className="nes-btn is-primary"
         >
@@ -99,7 +100,6 @@ function Navigation({camera,controls,moveSound,setCurrentTab}) {
           type="button"
           onClick={() => {
             toAbout()
-            setCurrentTab('about')
           }}
           className="nes-btn is-primary"
         >

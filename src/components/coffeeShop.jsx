@@ -7,30 +7,38 @@ import backgroundMusic from '../assets/sound/Persona5.mp3'
 import whoosh from '../assets/sound/whoosh.mp3'
 import loadGLTFModel from './util/loadGLTFModel'
 import loadText from './util/loadText'
+import mapSkill from '../assets/texture/mapSkill.png'
+import mapMe from '../assets/texture/mapMe.png'
 import Navigation from './navigation'
-import ProjectRaycaster from './util/projectRaycaster'
+import {selectedAnimation, unselectedAnimation} from './util/coffeeAnimation'
 import ProgressBar from './progressBar'
 import EnterButton from './enterButton'
 import ProjectContent from './projectContent'
 
 const CoffeeShop = () => {
   const canvasRef = useRef()
-  const [loading, setLoading] = useState(true)
-  const [enter, setEnter] = useState(false)
-  const [progress, setProgress] = useState(0)
   const [renderer, setRenderer] = useState()
   const [camera, setCamera] = useState()
   const [controls, setControls] = useState()
-  const [coffee, setCoffee] = useState(null)
   const [BGM, setBGM] = useState(null)
+  const [scene, setScene] = useState()
+  const [raycaster, setRaycaster] = useState()
+  const [textureSkill, setTextureSkill] = useState()
+  const [textureMe, setTextureMe] = useState()
   const [moveSound, setMoveSound] = useState(null)
   const [currentTab, setCurrentTab] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [enter, setEnter] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [coffee, setCoffee] = useState(null)
+  const [selectedCoffee, setSelectedCoffee] = useState(null)
 
   useEffect(() => {
     const { current: container } = canvasRef
     if (container && !renderer) {
       const renderer = initRenderer(container)
       const scene = new THREE.Scene()
+      setScene(scene)
       initEnv(scene)
       const camera = initCamera()
       const controls = initControls(camera, renderer.domElement)
@@ -50,7 +58,7 @@ const CoffeeShop = () => {
 
       //loading progress manager
       manager.onLoad = function () {
-        timer = setTimeout(() => {
+        setTimeout(() => {
           setLoading(false)
         }, 800)
       }
@@ -59,36 +67,27 @@ const CoffeeShop = () => {
       }
 
       //load sound
-      initSound(camera)
+      const { moveSound } = initSound(camera)
 
       //load text model
       loadText(scene)
 
       //raycaster
-      ProjectRaycaster(scene, camera, setCoffee)
+      const raycaster = new THREE.Raycaster()
+      setRaycaster(raycaster)
+      const textureSkill = new THREE.TextureLoader().load(mapSkill)
+      const textureMe = new THREE.TextureLoader().load(mapMe)
+      textureSkill.flipY = false
+      textureMe.flipY = false
+      setTextureSkill(textureSkill)
+      setTextureMe(textureMe)
 
-      const escapeHandler = (e) => {
-        if (e.key === "Escape") {
-          restorePosition()
-        }
-      };
-      document.addEventListener("keydown", escapeHandler, false);
 
-      const mouse = new THREE.Vector2()
-      onMouseMove = (e,currentTab) => {
-
-        if (!(currentTab ==='about')) {
-          mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-          mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-          var ratio = 0.2;
-          gsap.to(scene.rotation, {
-            y: mouse.x * ratio,
-            // x: -mouse.y * ratio,
-            duration: 1,
-            ease: 'power2.out',
-          });
-        }
+      const escapeHandler = () => {
+        restorePosition(camera, controls, moveSound)
       }
+      document.addEventListener('keydown', escapeHandler, false)
+
       let req = null
       const animate = () => {
         window.onresize = function () {
@@ -104,13 +103,13 @@ const CoffeeShop = () => {
       return () => {
         cancelAnimationFrame(req)
         renderer.dispose()
-        document.removeEventListener("keydown", escapeHandler, false);
+        document.removeEventListener('keydown', escapeHandler, false)
       }
     }
   }, [])
 
   //add renderer
-  initRenderer = (container) => {
+  const initRenderer = (container) => {
     const scW = container.clientWidth
     const scH = container.clientHeight
     const renderer = new THREE.WebGLRenderer({
@@ -126,7 +125,7 @@ const CoffeeShop = () => {
   }
 
   //add environment
-  initEnv = (scene) => {
+  const initEnv = (scene) => {
     // const pmremGenerator = new THREE.PMREMGenerator(renderer)
     // scene.environment = pmremGenerator.fromScene(
     //   new RoomEnvironment(),
@@ -137,7 +136,7 @@ const CoffeeShop = () => {
   }
 
   //add Orbit Controls
-  initControls = (camera, renderer) => {
+  const initControls = (camera, renderer) => {
     const controls = new OrbitControls(camera, renderer)
     controls.target.set(0, 0.7, 0)
     controls.update()
@@ -150,7 +149,7 @@ const CoffeeShop = () => {
   }
 
   //add Perspective Camera
-  initCamera = () => {
+  const initCamera = () => {
     const camera = new THREE.PerspectiveCamera(
       30,
       window.innerWidth / window.innerHeight
@@ -160,7 +159,7 @@ const CoffeeShop = () => {
     return camera
   }
 
-  initSound = (camera) => {
+  const initSound = (camera) => {
     const listener = new THREE.AudioListener()
     camera.add(listener)
     const BGM = new THREE.Audio(listener)
@@ -178,9 +177,10 @@ const CoffeeShop = () => {
       moveSound.setVolume(0.5)
       setMoveSound(moveSound)
     })
+    return { BGM, moveSound }
   }
 
-  initEnter = () => {
+  const initEnter = () => {
     BGM.play()
     gsap.to(camera.position, {
       x: 5,
@@ -195,7 +195,9 @@ const CoffeeShop = () => {
     setEnter(true)
   }
 
-  restorePosition = () => {
+  const restorePosition = (camera, controls, moveSound) => {
+    setCurrentTab('init')
+    setCoffee(null)
     gsap.to(camera.position, {
       x: 5,
       y: 3,
@@ -205,9 +207,6 @@ const CoffeeShop = () => {
       onStart: () => {
         moveSound.play()
         controls.enabled = true
-      },
-      onComplete: () => {
-        setCurrentTab('init')
       }
     })
     gsap.to(controls.target, {
@@ -218,6 +217,58 @@ const CoffeeShop = () => {
       ease: 'power2.out'
     })
   }
+  const mouse = new THREE.Vector2()
+  const onMouseMove = (e, currentTab) => {
+    if (!(currentTab === 'about')) {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+      var ratio = 0.2
+      if (scene) {
+        gsap.to(scene.rotation, {
+          y: mouse.x * ratio,
+          // x: -mouse.y * ratio,
+          duration: 1,
+          ease: 'power2.out'
+        })
+      }
+    }
+  }
+
+  const onMouseClick = (e) => {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+    raycaster.setFromCamera(mouse, camera)
+    const found = raycaster.intersectObjects(scene.children, true)
+    if (found.length) {
+      let current = found[0].object
+      while (current.parent.parent.parent !== null) {
+        current = current.parent
+      }
+
+      if (current.name.startsWith('Menu')) {
+        if (current.name == 'MenuSkill') {
+          current.material.map = textureSkill
+        } else if (current.name == 'MenuMe') {
+          current.material.map = textureMe
+        }
+      }
+
+      if (current.name.startsWith('CoffeeEquipment')) {
+        if (selectedCoffee == null) {
+          selectedAnimation(current)
+        } else if (selectedCoffee !== current) {
+          unselectedAnimation(selectedCoffee)
+          selectedAnimation(current)
+        }
+        setSelectedCoffee(current)
+        setCoffee(current)
+      } else if (selectedCoffee) {
+        unselectedAnimation(selectedCoffee)
+        setSelectedCoffee(null)
+        setCoffee(null)
+      }
+    }
+  }
 
   return (
     <div
@@ -225,8 +276,8 @@ const CoffeeShop = () => {
         onMouseClick(e)
       }}
       onMouseMove={(e) => {
-        if(typeof onMouseMove === 'function'){
-          onMouseMove(e,currentTab)
+        if (typeof onMouseMove === 'function') {
+          onMouseMove(e, currentTab)
         }
       }}
       style={{
@@ -259,10 +310,13 @@ const CoffeeShop = () => {
         </div>
       ) : (
         <Fragment>
-          <Navigation camera={camera} controls={controls} moveSound={moveSound} setCurrentTab={setCurrentTab}/>
-          {coffee && (
-            <ProjectContent coffee={coffee} />
-          )}
+          <Navigation
+            camera={camera}
+            controls={controls}
+            moveSound={moveSound}
+            setCurrentTab={setCurrentTab}
+          />
+          {coffee && <ProjectContent coffee={coffee} />}
         </Fragment>
       )}
     </div>

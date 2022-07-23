@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 
 export default function projectContent({ coffee }) {
   
-  getContent=()=>{
+  const getContent = () => {
     switch (coffee.name) {
       case 'CoffeeEquipment1':
         return `Topic: Dental clinic management system\n
