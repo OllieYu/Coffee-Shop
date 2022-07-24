@@ -169,14 +169,14 @@ const CoffeeShop = () => {
       BGM.setBuffer(buffer)
       BGM.setLoop(true)
       BGM.setVolume(0.15)
-      setBGM(BGM)
     })
     audioLoader.load(whoosh, function (buffer) {
       moveSound.setBuffer(buffer)
       moveSound.setLoop(false)
       moveSound.setVolume(0.5)
-      setMoveSound(moveSound)
     })
+    setBGM(BGM)
+    setMoveSound(moveSound)
     return { BGM, moveSound }
   }
 
